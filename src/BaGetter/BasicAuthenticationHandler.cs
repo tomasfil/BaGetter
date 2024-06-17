@@ -89,6 +89,6 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 
     private bool ValidateCredentials(string username, string password)
     {
-        return bagetterOptions.Value.Authentication.Username == username && bagetterOptions.Value.Authentication.Password == password;
+        return bagetterOptions.Value.Authentication.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && bagetterOptions.Value.Authentication.Password == password;
     }
 }
