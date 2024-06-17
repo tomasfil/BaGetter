@@ -3,10 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using BaGetter.Core;
 using BaGetter.Protocol.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BaGetter.Web;
 
+[Authorize(AuthenticationSchemes = "BasicAuthentication", Policy = "NuGetUserPolicy")]
 public class SearchController : Controller
 {
     private readonly ISearchService _searchService;

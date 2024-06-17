@@ -58,4 +58,6 @@ public class BaGetterOptions
     public HealthCheckOptions HealthCheck { get; set; }
 
     public StatisticsOptions Statistics { get; set; }
+
+    public AuthenticationOptions? Authentication { get; set; }
 }
