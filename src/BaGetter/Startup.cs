@@ -1,7 +1,9 @@
 using System;
+using BaGetter.Authentication;
 using BaGetter.Core;
 using BaGetter.Core.Extensions;
 using BaGetter.Web;
+using BaGetter.Web.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,11 +30,11 @@ public class Startup
         services.ConfigureOptions<ValidateBaGetterOptions>();
         services.ConfigureOptions<ConfigureBaGetterServer>();
 
-        services.AddAuthentication("BasicAuthentication")
-        .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+        services.AddAuthentication(AuthenticationConstants.NugetBasicAuthenticationScheme)
+            .AddScheme<AuthenticationSchemeOptions, NugetBasicAuthenticationHandler>(AuthenticationConstants.NugetBasicAuthenticationScheme, null);
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("NuGetUserPolicy", policy =>
+            options.AddPolicy(AuthenticationConstants.NugetUserPolicy, policy =>
             {
                 policy.RequireAuthenticatedUser();
             });

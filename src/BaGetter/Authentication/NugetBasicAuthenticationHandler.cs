@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 using System;
 using BaGetter.Core;
 
-namespace BaGetter;
+namespace BaGetter.Web.Authentication;
 
-public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public class NugetBasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly IOptions<BaGetterOptions> bagetterOptions;
 
-    public BasicAuthenticationHandler(
+    public NugetBasicAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
@@ -31,8 +31,8 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         if (bagetterOptions.Value.Authentication is null ||
             (
                 string.IsNullOrWhiteSpace(bagetterOptions.Value.Authentication.Username) &&
-                string.IsNullOrWhiteSpace(bagetterOptions.Value.Authentication.Password)
-            ))
+                string.IsNullOrWhiteSpace(bagetterOptions.Value.Authentication.Password))
+            )
         {
             var claims = new[]
             {

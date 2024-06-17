@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using BaGetter.Authentication;
 using BaGetter.Core;
 using BaGetter.Protocol.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ namespace BaGetter.Web;
 /// See: https://docs.microsoft.com/en-us/nuget/api/registration-base-url-resource
 /// </summary>
 
-[Authorize(AuthenticationSchemes = "BasicAuthentication", Policy = "NuGetUserPolicy")]
+[Authorize(AuthenticationSchemes = AuthenticationConstants.NugetBasicAuthenticationScheme, Policy = AuthenticationConstants.NugetUserPolicy)]
 public class PackageMetadataController : Controller
 {
     private readonly IPackageMetadataService _metadata;
