@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 using BaGetter.Core;
+using System.Linq;
 
 namespace BaGetter.Web.Authentication;
 
@@ -28,11 +29,7 @@ public class NugetBasicAuthenticationHandler : AuthenticationHandler<Authenticat
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (bagetterOptions.Value.Authentication is null ||
-            (
-                string.IsNullOrWhiteSpace(bagetterOptions.Value.Authentication.Username) &&
-                string.IsNullOrWhiteSpace(bagetterOptions.Value.Authentication.Password))
-            )
+        if (bagetterOptions.Value.Authentication is null || bagetterOptions.Value.Authentication.Length==0 || bagetterOptions.Value.Authentication.All(a=> string.IsNullOrWhiteSpace(a.Username) && string.IsNullOrWhiteSpace(a.Password)))
         {
             var claims = new[]
             {
@@ -89,6 +86,6 @@ public class NugetBasicAuthenticationHandler : AuthenticationHandler<Authenticat
 
     private bool ValidateCredentials(string username, string password)
     {
-        return bagetterOptions.Value.Authentication.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && bagetterOptions.Value.Authentication.Password == password;
+        return bagetterOptions.Value.Authentication.Any(a=> a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && a.Password == password);
     }
 }

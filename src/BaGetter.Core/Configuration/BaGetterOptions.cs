@@ -9,6 +9,12 @@ public class BaGetterOptions
     public string ApiKey { get; set; }
 
     /// <summary>
+    /// The API Key required to authenticate package
+    /// operations. If empty, package operations do not require authentication.
+    /// </summary>
+    public string[] ApiKeys { get; set; }
+
+    /// <summary>
     /// The application root URL for usage in reverse proxy scenarios.
     /// </summary>
     public string PathBase { get; set; }
@@ -59,5 +65,5 @@ public class BaGetterOptions
 
     public StatisticsOptions Statistics { get; set; }
 
-    public AuthenticationOptions? Authentication { get; set; }
+    public AuthenticationOptions[] Authentication { get; set; }
 }
