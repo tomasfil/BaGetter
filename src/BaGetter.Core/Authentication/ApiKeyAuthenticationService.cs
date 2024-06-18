@@ -27,6 +27,6 @@ public class ApiKeyAuthenticationService : IAuthenticationService
         // No authentication is necessary if there is no required API key.
         if (_apiKey == null && (_apiKeys is null || _apiKeys.Length==0)) return true;
 
-        return _apiKey == apiKey || _apiKeys.Contains(apiKey);
+        return _apiKey == apiKey || _apiKeys?.Contains(apiKey) == true;
     }
 }
