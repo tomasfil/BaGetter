@@ -14,6 +14,20 @@ To do so, you can insert the desired API key in the `ApiKey` field.
 }
 ```
 
+You can also use new `ApiKeys` array field, so you can manage multiple API keys for multiple teams/developers.
+
+```json
+{
+    "ApiKeys": [
+        "NUGET-SERVER-API-KEY-1",
+        "NUGET-SERVER-API-KEY-2"
+    ]
+    ...
+}
+```
+
+Both `ApiKey` and `ApiKeys` work in conjunction additively eg.: `or` `||` logical operator.
+
 Users will now have to provide the API key to push packages:
 
 ```shell
