@@ -22,6 +22,9 @@ public class MirrorOptions : IValidatableObject
     /// </summary>
     public bool Legacy { get; set; }
 
+    public string Username { get; set; }
+    public string Password { get; set; }
+
     /// <summary>
     /// The time before a download from the package source times out.
     /// </summary>

@@ -177,15 +177,30 @@ public static partial class DependencyInjectionExtensions
         var assemblyName = assembly.GetName().Name;
         var assemblyVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.0";
 
-        var client = new HttpClient(new HttpClientHandler
+        HttpClient httpClient;
+
+        if (!string.IsNullOrEmpty(options.Username) && !string.IsNullOrEmpty(options.Password))
         {
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-        });
+            var credentials = new NetworkCredential(options.Username, options.Password);
+            var handler = new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                Credentials = credentials,
+            };
+            httpClient = new HttpClient(handler);
+        }
+        else
+        {
+            httpClient = new HttpClient(new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+            });
+        }
 
-        client.DefaultRequestHeaders.Add("User-Agent", $"{assemblyName}/{assemblyVersion}");
-        client.Timeout = TimeSpan.FromSeconds(options.PackageDownloadTimeoutSeconds);
+        httpClient.DefaultRequestHeaders.Add("User-Agent", $"{assemblyName}/{assemblyVersion}");
+        httpClient.Timeout = TimeSpan.FromSeconds(options.PackageDownloadTimeoutSeconds);
 
-        return client;
+        return httpClient;
     }
 
     private static NuGetClientFactory NuGetClientFactoryFactory(IServiceProvider provider)
