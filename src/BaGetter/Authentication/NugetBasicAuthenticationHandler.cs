@@ -29,18 +29,9 @@ public class NugetBasicAuthenticationHandler : AuthenticationHandler<Authenticat
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (bagetterOptions.Value.Authentication is null || bagetterOptions.Value.Authentication.Length==0 || bagetterOptions.Value.Authentication.All(a=> string.IsNullOrWhiteSpace(a.Username) && string.IsNullOrWhiteSpace(a.Password)))
+        if (bagetterOptions.Value.Authentication is null || bagetterOptions.Value.Authentication.Length == 0 || bagetterOptions.Value.Authentication.All(a => string.IsNullOrWhiteSpace(a.Username) && string.IsNullOrWhiteSpace(a.Password)))
         {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Anonymous, string.Empty),
-            };
-            var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new ClaimsPrincipal(identity);
-
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
-
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+            return CreateAnonymousAuthenticatonResult();
         }
         else
         {
@@ -65,16 +56,7 @@ public class NugetBasicAuthenticationHandler : AuthenticationHandler<Authenticat
             if (!ValidateCredentials(username, password))
                 return Task.FromResult(AuthenticateResult.Fail("Invalid Username or Password"));
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, username),
-            };
-            var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new ClaimsPrincipal(identity);
-
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
-
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+            return CreateUserAuthenticatonResult(username);
         }
     }
 
@@ -84,8 +66,36 @@ public class NugetBasicAuthenticationHandler : AuthenticationHandler<Authenticat
         await base.HandleChallengeAsync(properties);
     }
 
+    private Task<AuthenticateResult> CreateAnonymousAuthenticatonResult()
+    {
+        var claims = new[]
+                    {
+                new Claim(ClaimTypes.Anonymous, string.Empty),
+            };
+        var identity = new ClaimsIdentity(claims, Scheme.Name);
+        var principal = new ClaimsPrincipal(identity);
+
+        var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+        return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+
+    private Task<AuthenticateResult> CreateUserAuthenticatonResult(string username)
+    {
+        var claims = new[]
+        {
+                new Claim(ClaimTypes.Name, username),
+            };
+        var identity = new ClaimsIdentity(claims, Scheme.Name);
+        var principal = new ClaimsPrincipal(identity);
+
+        var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+        return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+
     private bool ValidateCredentials(string username, string password)
     {
-        return bagetterOptions.Value.Authentication.Any(a=> a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && a.Password == password);
+        return bagetterOptions.Value.Authentication.Any(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && a.Password == password);
     }
 }
