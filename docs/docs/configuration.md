@@ -126,10 +126,29 @@ To do so, you can insert the username/password combinations in the `Authenticati
 }
 ```
 
-Users will now have to provide the username and password to fetch and download packages:
+Users will now have to provide the username and password to fetch and download packages.
+
+How to add private nuget feed:
+
+1. Download the latest NuGet executable.
+2. Open a Command Prompt and change the path to the nuget.exe location.
+3. The command from the example below stores a token in the %AppData%\NuGet\NuGet.config file. Your original credentials cannot be obtained from this token.
+
 
 ```shell
 NuGet Sources Add -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password"
+```
+
+If you are unable to connect to the feed by using encrypted credentials, store your credentials in clear text.
+
+```shell
+NuGet Sources Add -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password" -StorePasswordInClearText
+```
+
+If you have already stored a token instead of storing the credentials as clear text, update the definition in the %AppData%\NuGet\NuGet.config file by using the following command:
+
+```shell
+NuGet Sources Update  -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password" -StorePasswordInClearText
 ```
 
 ## Database configuration
