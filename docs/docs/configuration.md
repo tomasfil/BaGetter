@@ -111,11 +111,26 @@ Pushing a package with a pre-release version like "3.1.0-SNAPSHOT" will overwrit
 
 A private feed requires users to authenticate before accessing packages.
 
-:::warning
+You can require that users provide a username and password, to setup nuget feed.
+To do so, you can insert the username/password combinations in the `Authentication` array.
 
-Private feeds are not supported at this time! See [this pull request](https://github.com/loic-sharma/BaGet/pull/69) for more information.
+```json
+{
+    "Authentication": [
+        {
+            "Username": "username",
+            "Password": "password"
+        }
+    ]
+    ...
+}
+```
 
-:::
+Users will now have to provide the username and password to fetch and download packages:
+
+```shell
+NuGet Sources Add -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password"
+```
 
 ## Database configuration
 
