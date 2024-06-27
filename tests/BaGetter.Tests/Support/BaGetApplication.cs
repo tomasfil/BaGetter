@@ -109,25 +109,6 @@ public class BaGetterApplication : WebApplicationFactory<Startup>
 
                 dbCreator.Create();
                 ctx.Database.Migrate();
-
-                services.AddAuthentication(options =>
-                {
-                    // Breaks existing tests if the contains check is not here.
-                    if (!options.SchemeMap.ContainsKey(AuthenticationConstants.NugetBasicAuthenticationScheme))
-                    {
-                        options.AddScheme<NugetBasicAuthenticationHandler>(AuthenticationConstants.NugetBasicAuthenticationScheme, AuthenticationConstants.NugetBasicAuthenticationScheme);
-                        options.DefaultAuthenticateScheme = AuthenticationConstants.NugetBasicAuthenticationScheme;
-                        options.DefaultChallengeScheme = AuthenticationConstants.NugetBasicAuthenticationScheme;
-                    }
-                });
-
-                services.AddAuthorization(options =>
-                {
-                    options.AddPolicy(AuthenticationConstants.NugetUserPolicy, policy =>
-                    {
-                        policy.RequireAuthenticatedUser();
-                    });
-                });
             });
     }
 }
