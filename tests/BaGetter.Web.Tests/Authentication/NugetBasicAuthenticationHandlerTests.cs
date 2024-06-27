@@ -13,7 +13,7 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
 
-namespace BaGetter.Tests;
+namespace BaGetter.Web.Tests;
 
 public class NugetBasicAuthenticationHandlerTests
 {
