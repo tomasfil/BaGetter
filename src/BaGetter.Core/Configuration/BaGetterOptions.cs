@@ -65,5 +65,5 @@ public class BaGetterOptions
 
     public StatisticsOptions Statistics { get; set; }
 
-    public AuthenticationOptions[] Authentication { get; set; }
+    public AuthenticationOptions Authentication { get; set; }
 }

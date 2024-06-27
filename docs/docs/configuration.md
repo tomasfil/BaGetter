@@ -14,7 +14,7 @@ To do so, you can insert the desired API key in the `ApiKey` field.
 }
 ```
 
-You can also use new `ApiKeys` array field, so you can manage multiple API keys for multiple teams/developers.
+You can also use the `ApiKeys` array in order to manage multiple API keys for multiple teams/developers.
 
 ```json
 {
@@ -125,17 +125,19 @@ Pushing a package with a pre-release version like "3.1.0-SNAPSHOT" will overwrit
 
 A private feed requires users to authenticate before accessing packages.
 
-You can require that users provide a username and password, to setup nuget feed.
-To do so, you can insert the username/password combinations in the `Authentication` array.
+You can require that users provide a username and password to access the nuget feed.
+To do so, you can insert the credentials in the `Authentication` section.
 
 ```json
 {
-    "Authentication": [
-        {
+    "Authentication": {
+        "Credentials": [
+          {
             "Username": "username",
             "Password": "password"
-        }
-    ]
+          }
+        ]
+    }
     ...
 }
 ```
