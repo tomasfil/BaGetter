@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BaGetter.Core.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace BaGetter.Core;
@@ -9,7 +10,7 @@ namespace BaGetter.Core;
 public class ApiKeyAuthenticationService : IAuthenticationService
 {
     private readonly string _apiKey;
-    private readonly string[] _apiKeys;
+    private readonly ApiKey[] _apiKeys;
 
     public ApiKeyAuthenticationService(IOptionsSnapshot<BaGetterOptions> options)
     {
@@ -27,6 +28,6 @@ public class ApiKeyAuthenticationService : IAuthenticationService
         // No authentication is necessary if there is no required API key.
         if (_apiKey == null && (_apiKeys is null || _apiKeys.Length==0)) return true;
 
-        return _apiKey == apiKey || _apiKeys?.Contains(apiKey) == true;
+        return _apiKey == apiKey || _apiKeys?.Any(x=> x.Key.Equals(apiKey)) == true;
     }
 }

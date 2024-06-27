@@ -1,3 +1,5 @@
+using BaGetter.Core.Configuration;
+
 namespace BaGetter.Core;
 
 public class BaGetterOptions
@@ -12,7 +14,7 @@ public class BaGetterOptions
     /// The API Keys required to authenticate package
     /// operations. If <see cref="ApiKeys"/> and  <see cref="ApiKey"/> are not set, package operations do not require authentication.
     /// </summary>
-    public string[] ApiKeys { get; set; }
+    public ApiKey[] ApiKeys { get; set; }
 
     /// <summary>
     /// The application root URL for usage in reverse proxy scenarios.
