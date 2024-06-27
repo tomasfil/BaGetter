@@ -17,13 +17,13 @@ namespace BaGetter.Tests;
 
 public class NugetBasicAuthenticationHandlerTests
 {
-    private readonly Mock<IOptionsMonitor<AuthenticationSchemeOptions>> _options;
-    private readonly Mock<ILoggerFactory> _loggerFactory;
-    private readonly UrlEncoder _encoder;
     private readonly Mock<IOptions<BaGetterOptions>> _bagetterOptions;
+    private readonly UrlEncoder _encoder;
     private readonly Mock<HttpContext> _httpContext;
     private readonly Mock<HttpRequest> _httpRequest;
     private readonly Mock<HttpResponse> _httpResponse;
+    private readonly Mock<ILoggerFactory> _loggerFactory;
+    private readonly Mock<IOptionsMonitor<AuthenticationSchemeOptions>> _options;
 
     public NugetBasicAuthenticationHandlerTests()
     {
@@ -61,27 +61,6 @@ public class NugetBasicAuthenticationHandlerTests
     }
 
     [Fact]
-    public async Task HandleAuthenticateAsync_NoAuthorizationHeader_ReturnsNoResult()
-    {
-        // Arrange
-        SetupBaGetterOptions(new BaGetterOptions
-        {
-            Authentication = new NugetAuthenticationOptions
-            {
-                Credentials = [new NugetCredentials { Username = "user", Password = "pass" }]
-            }
-        });
-        _httpRequest.Setup(r => r.Headers).Returns(new HeaderDictionary());
-        var handler = CreateHandler();
-
-        // Act
-        var result = await handler.AuthenticateAsync();
-
-        // Assert
-        Assert.True(result.None);
-    }
-
-    [Fact]
     public async Task HandleAuthenticateAsync_InvalidAuthorizationHeader_ReturnsFailResult()
     {
         // Arrange
@@ -104,6 +83,52 @@ public class NugetBasicAuthenticationHandlerTests
         // Assert
         Assert.False(result.Succeeded);
         Assert.Equal("Invalid Authorization Header", result.Failure.Message);
+    }
+
+    [Fact]
+    public async Task HandleAuthenticateAsync_InvalidCredentials_ReturnsFailResult()
+    {
+        // Arrange
+        SetupBaGetterOptions(new BaGetterOptions
+        {
+            Authentication = new NugetAuthenticationOptions
+            {
+                Credentials = [new NugetCredentials { Username = "user", Password = "pass" }]
+            }
+        });
+        _httpRequest.Setup(r => r.Headers).Returns(new HeaderDictionary
+        {
+            { "Authorization", new StringValues($"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes("invaliduser:invalidpass"))}") }
+        });
+        var handler = CreateHandler();
+
+        // Act
+        var result = await handler.AuthenticateAsync();
+
+        // Assert
+        Assert.False(result.Succeeded);
+        Assert.Equal("Invalid Username or Password", result.Failure.Message);
+    }
+
+    [Fact]
+    public async Task HandleAuthenticateAsync_NoAuthorizationHeader_ReturnsNoResult()
+    {
+        // Arrange
+        SetupBaGetterOptions(new BaGetterOptions
+        {
+            Authentication = new NugetAuthenticationOptions
+            {
+                Credentials = [new NugetCredentials { Username = "user", Password = "pass" }]
+            }
+        });
+        _httpRequest.Setup(r => r.Headers).Returns(new HeaderDictionary());
+        var handler = CreateHandler();
+
+        // Act
+        var result = await handler.AuthenticateAsync();
+
+        // Assert
+        Assert.True(result.None);
     }
 
     [Fact]
@@ -133,36 +158,6 @@ public class NugetBasicAuthenticationHandlerTests
         Assert.True(result.Principal.HasClaim(ClaimTypes.Name, username));
     }
 
-    [Fact]
-    public async Task HandleAuthenticateAsync_InvalidCredentials_ReturnsFailResult()
-    {
-        // Arrange
-        SetupBaGetterOptions(new BaGetterOptions
-        {
-            Authentication = new NugetAuthenticationOptions
-            {
-                Credentials = [new NugetCredentials { Username = "user", Password = "pass" }]
-            }
-        });
-        _httpRequest.Setup(r => r.Headers).Returns(new HeaderDictionary
-        {
-            { "Authorization", new StringValues($"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes("invaliduser:invalidpass"))}") }
-        });
-        var handler = CreateHandler();
-
-        // Act
-        var result = await handler.AuthenticateAsync();
-
-        // Assert
-        Assert.False(result.Succeeded);
-        Assert.Equal("Invalid Username or Password", result.Failure.Message);
-    }
-
-    private void SetupBaGetterOptions(BaGetterOptions options)
-    {
-        _bagetterOptions.Setup(x => x.Value).Returns(options);
-    }
-
     private NugetBasicAuthenticationHandler CreateHandler()
     {
         var handler = new NugetBasicAuthenticationHandler(
@@ -174,5 +169,10 @@ public class NugetBasicAuthenticationHandlerTests
         handler.InitializeAsync(new AuthenticationScheme("Basic", null, typeof(NugetBasicAuthenticationHandler)), _httpContext.Object).GetAwaiter().GetResult();
 
         return handler;
+    }
+
+    private void SetupBaGetterOptions(BaGetterOptions options)
+    {
+        _bagetterOptions.Setup(x => x.Value).Returns(options);
     }
 }
