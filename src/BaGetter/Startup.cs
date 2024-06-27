@@ -5,6 +5,7 @@ using BaGetter.Core.Extensions;
 using BaGetter.Web;
 using BaGetter.Web.Authentication;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
@@ -30,8 +31,17 @@ public class Startup
         services.ConfigureOptions<ValidateBaGetterOptions>();
         services.ConfigureOptions<ConfigureBaGetterServer>();
 
-        services.AddAuthentication(AuthenticationConstants.NugetBasicAuthenticationScheme)
-            .AddScheme<AuthenticationSchemeOptions, NugetBasicAuthenticationHandler>(AuthenticationConstants.NugetBasicAuthenticationScheme, null);
+        services.AddAuthentication(options =>
+        {
+            // Breaks existing tests if the contains check is not here.
+            if (!options.SchemeMap.ContainsKey(AuthenticationConstants.NugetBasicAuthenticationScheme))
+            {
+                options.AddScheme<NugetBasicAuthenticationHandler>(AuthenticationConstants.NugetBasicAuthenticationScheme, AuthenticationConstants.NugetBasicAuthenticationScheme);
+                options.DefaultAuthenticateScheme = AuthenticationConstants.NugetBasicAuthenticationScheme;
+                options.DefaultChallengeScheme = AuthenticationConstants.NugetBasicAuthenticationScheme;
+            }
+        });
+
         services.AddAuthorization(options =>
         {
             options.AddPolicy(AuthenticationConstants.NugetUserPolicy, policy =>

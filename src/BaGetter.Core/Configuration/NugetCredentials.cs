@@ -1,6 +1,6 @@
-﻿namespace BaGetter.Core;
+namespace BaGetter.Core;
 
-public sealed class Credential
+public sealed class NugetCredentials
 {
     public string Username { get; set; }
 
