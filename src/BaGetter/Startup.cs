@@ -31,25 +31,6 @@ public class Startup
         services.ConfigureOptions<ValidateBaGetterOptions>();
         services.ConfigureOptions<ConfigureBaGetterServer>();
 
-        services.AddAuthentication(options =>
-        {
-            // Breaks existing tests if the contains check is not here.
-            if (!options.SchemeMap.ContainsKey(AuthenticationConstants.NugetBasicAuthenticationScheme))
-            {
-                options.AddScheme<NugetBasicAuthenticationHandler>(AuthenticationConstants.NugetBasicAuthenticationScheme, AuthenticationConstants.NugetBasicAuthenticationScheme);
-                options.DefaultAuthenticateScheme = AuthenticationConstants.NugetBasicAuthenticationScheme;
-                options.DefaultChallengeScheme = AuthenticationConstants.NugetBasicAuthenticationScheme;
-            }
-        });
-
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(AuthenticationConstants.NugetUserPolicy, policy =>
-            {
-                policy.RequireAuthenticatedUser();
-            });
-        });
-
         services.AddBaGetterOptions<IISServerOptions>(nameof(IISServerOptions));
         services.AddBaGetterWebApplication(ConfigureBaGetterApplication);
 
