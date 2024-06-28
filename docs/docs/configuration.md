@@ -18,14 +18,17 @@ You can also use the `ApiKeys` array in order to manage multiple API keys for mu
 
 ```json
 {
-    "ApiKeys": [
-        {
-            "Key" : "NUGET-SERVER-API-KEY-1"
-        },
-        {
-            "Key" : "NUGET-SERVER-API-KEY-2"
-        }
-    ]
+    "Authentication": {
+        "ApiKeys": [
+            {
+                "Key" : "NUGET-SERVER-API-KEY-1"
+            },
+            {
+                "Key" : "NUGET-SERVER-API-KEY-2"
+            }
+        ]
+        ...
+    }
     ...
 }
 ```

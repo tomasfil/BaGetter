@@ -11,12 +11,6 @@ public class BaGetterOptions
     public string ApiKey { get; set; }
 
     /// <summary>
-    /// The API Keys required to authenticate package
-    /// operations. If <see cref="ApiKeys"/> and  <see cref="ApiKey"/> are not set, package operations do not require authentication.
-    /// </summary>
-    public ApiKey[] ApiKeys { get; set; }
-
-    /// <summary>
     /// The application root URL for usage in reverse proxy scenarios.
     /// </summary>
     public string PathBase { get; set; }
