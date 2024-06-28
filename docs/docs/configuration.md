@@ -139,11 +139,12 @@ To do so, you can insert the credentials in the `Authentication` section.
 {
     "Authentication": {
         "Credentials": [
-          {
-            "Username": "username",
-            "Password": "password"
-          }
+            {
+                "Username": "username",
+                "Password": "password"
+            }
         ]
+        ...
     }
     ...
 }
