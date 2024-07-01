@@ -1,9 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <AllowUntrustedCertificate>True</AllowUntrustedCertificate>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ContainerRepository>bagetter</ContainerRepository>
+    <ContainerRegistry>docker-registry.meac.cz:5000</ContainerRegistry>
+    <ContainerImageTag>0.0.3</ContainerImageTag>
+    <ContainerRuntimeIdentifier>linux-x64</ContainerRuntimeIdentifier>
+    <PublishProfile>DefaultContainer</PublishProfile>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+    <SelfContained>true</SelfContained>
+    <Authors>Tomáš Filip</Authors>
+    <Company>MEAC</Company>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
@@ -12,7 +22,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\BaGetter.Aliyun\BaGetter.Aliyun.csproj" />
     <ProjectReference Include="..\BaGetter.Aws\BaGetter.Aws.csproj" />
@@ -26,5 +35,4 @@
     <ProjectReference Include="..\BaGetter.Web\BaGetter.Web.csproj" />
     <ProjectReference Include="..\BaGetter.Protocol\BaGetter.Protocol.csproj" />
   </ItemGroup>
-
 </Project>
