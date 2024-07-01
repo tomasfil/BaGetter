@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using BaGetter;
 using BaGetter.Core;
 using BaGetter.Web;
 using McMaster.Extensions.CommandLineUtils;
@@ -8,12 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BaGetter;
 
-public class Program
-{
-    public static async Task Main(string[] args)
-    {
         var host = CreateHostBuilder(args).Build();
         if (!host.ValidateStartupOptions())
         {
@@ -51,34 +47,32 @@ public class Program
         });
 
         await app.ExecuteAsync(args);
-    }
 
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host
-            .CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((ctx, config) =>
+static IHostBuilder CreateHostBuilder(string[] args)
+{
+    return Host
+        .CreateDefaultBuilder(args)
+        .ConfigureAppConfiguration((ctx, config) =>
+        {
+            var root = Environment.GetEnvironmentVariable("BAGET_CONFIG_ROOT");
+
+            if (!string.IsNullOrEmpty(root))
             {
-                var root = Environment.GetEnvironmentVariable("BAGET_CONFIG_ROOT");
+                config.SetBasePath(root);
+            }
 
-                if (!string.IsNullOrEmpty(root))
-                {
-                    config.SetBasePath(root);
-                }
-
-                // Optionally load secrets from files in the conventional path
-                config.AddKeyPerFile("/run/secrets", optional: true);
-            })
-            .ConfigureWebHostDefaults(web =>
+            // Optionally load secrets from files in the conventional path
+            config.AddKeyPerFile("/run/secrets", optional: true);
+        })
+        .ConfigureWebHostDefaults(web =>
+        {
+            web.ConfigureKestrel(options =>
             {
-                web.ConfigureKestrel(options =>
-                {
-                    // Remove the upload limit from Kestrel. If needed, an upload limit can
-                    // be enforced by a reverse proxy server, like IIS.
-                    options.Limits.MaxRequestBodySize = null;
-                });
-
-                web.UseStartup<Startup>();
+                // Remove the upload limit from Kestrel. If needed, an upload limit can
+                // be enforced by a reverse proxy server, like IIS.
+                options.Limits.MaxRequestBodySize = null;
             });
-    }
+
+            web.UseStartup<Startup>();
+        });
 }
