@@ -5,11 +5,6 @@ function Test-GitInstalled {
     return -not [string]::IsNullOrEmpty($git)
 }
 
-function Test-DockerInstalled {
-    $docker = where.exe docker
-    return -not [string]::IsNullOrEmpty($docker)
-}
-
 function UpdateAndPublishProject 
 {
     param(
@@ -30,6 +25,29 @@ function UpdateAndPublishProject
         return
     }
 
+    # Restore the project dependencies
+    Write-Host "Restoring dependencies..."
+    dotnet restore "`"$($project.FileName)`""
+    $restoreResult = $LASTEXITCODE
+    Write-Host "Restore process completed. $restoreResult"
+    if ($restoreResult -ne 0)
+    {
+        Write-Host "Restore failed, not building."
+        return
+    }
+
+    # Build the project in Release mode
+    Write-Host "Running build in release mode..."
+    dotnet build --configuration Release --no-restore "`"$($project.FileName)`""
+    $buildResult = $LASTEXITCODE
+    Write-Host "Build process completed. $buildResult"
+    if ($buildResult -ne 0) {
+        Write-Host "Build failed, exiting ..."
+        return
+    }
+        Write-Host "Build Succeeded ..."
+
+
     $propertyDefaults = @(
         @{ Name = "ContainerRepository"; DefaultValue = $project.Name.ToLower() },
         @{ Name = "ContainerRegistry"; DefaultValue = "" },
@@ -38,6 +56,7 @@ function UpdateAndPublishProject
         @{ Name = "PublishProfile"; DefaultValue = "DefaultContainer" },
         @{ Name = "PublishReadyToRun"; DefaultValue = "true" },
         @{ Name = "PublishReadyToRunComposite"; DefaultValue = "true" }
+        # Add more properties and default values as needed
     )
     $createdDefaultValue = $false
     foreach ($property in $propertyDefaults) {
@@ -62,8 +81,8 @@ function UpdateAndPublishProject
         return
     }
 
+    
     $containerRegistryIdElement = $csprojContent.SelectSingleNode("//ContainerRegistry")
-    $containerRepositoryElement = $csprojContent.SelectSingleNode("//ContainerRepository")
 
     if([string]::IsNullOrEmpty($containerRegistryIdElement.InnerText)){
         Write-Host "ContainerRegistry must be set first ..."
@@ -74,7 +93,7 @@ function UpdateAndPublishProject
     Write-Host "Handling versioning..."
     $ContainerImageTagElement = $csprojContent.SelectSingleNode("//ContainerImageTag")
 
-    # Extract the current version
+        # Extract the current version
     $currentVersion = [Version]::Parse($ContainerImageTagElement.InnerText)
 
     $newVersion = [Version]::new($currentVersion.Major, $currentVersion.Minor, $currentVersion.Build + 1)
@@ -83,28 +102,24 @@ function UpdateAndPublishProject
 
     # Update the VersionPrefix in the .csproj file
     $ContainerImageTagElement.InnerText = $newVersion.ToString()
+   
 
     # Save the changes to the .csproj file
     Write-Host "Saving project information..."
     $csprojContent.Save($project.FullName)
 
-    # Build the Docker image
-    $dockerTag = "$($containerRegistryIdElement.InnerText)/$($containerRepositoryElement.InnerText):$newVersion"
-    Write-Host "Building Docker image: $dockerTag"
-    docker build -t $dockerTag -f $src/Dockerfile --build-arg Version=$newVersion $project.DirectoryName
-
-    # Push the Docker image to the registry
-    Write-Host "Pushing Docker image to registry..."
-    docker push $dockerTag
+    # Pack the project using the new version
+    Write-Host "Publishing the project..."
+    dotnet publish $project.FullName -c Release --os linux --arch x64
+    Write-Host "Publishing process completed..."
 
     Write-Host "______________Processed $($project.Name)_______________"
     
     git add -A 
-    git commit -m "Publish Docker image $dockerTag"
+    git commit -m "Publish"
     git tag -a "$($newVersion)" -m "publishDockerApp.ps1 - $($newVersion)"
     git push
-    git push --tags
-}
+ }
 
 # Check if Git is installed
 Write-Host "Checking for GIT..."
@@ -113,25 +128,19 @@ if (-not (Test-GitInstalled)) {
     return
 }
 
-# Check if Docker is installed
-Write-Host "Checking for Docker..."
-if (-not (Test-DockerInstalled)) {
-    Write-Host "Docker is not installed. Please install Docker and try again."
-    return
-}
-
 # Check the current Git branch
-Write-Host "Checking for main branch..."
+Write-Host "Checking for master branch..."
 
 $currentBranch = git symbolic-ref --short HEAD
 
-# Exit the script if the current branch is not 'main'
-if ($currentBranch -ne 'main') {
-    Write-Host "Not on the main branch, exiting."
+# Exit the script if the current branch is not 'master'
+if ($currentBranch -ne 'localPublish') {
+    Write-Host "Not on the master branch, exiting."
     return
 }
 
 # Get the current project from the Package Manager Console
 $currentProject = Get-Project
+
 
 UpdateAndPublishProject $currentProject
