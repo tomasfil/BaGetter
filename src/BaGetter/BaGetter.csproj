@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64</Platforms>
     <ContainerRepository>bagetter</ContainerRepository>
     <ContainerRegistry>docker-registry.meac.cz:5000</ContainerRegistry>
-    <ContainerImageTag>0.0.4</ContainerImageTag>
+    <ContainerImageTag>0.0.5</ContainerImageTag>
     <ContainerRuntimeIdentifier>linux-x64</ContainerRuntimeIdentifier>
     <PublishProfile>DefaultContainer</PublishProfile>
     <PublishReadyToRun>true</PublishReadyToRun>
