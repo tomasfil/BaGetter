@@ -172,7 +172,7 @@ NuGet Sources Add -Name "localhost" -Source "http://localhost:5000/v3/index.json
 If you have already stored a token instead of storing the credentials as clear text, update the definition in the %AppData%\NuGet\NuGet.config file by using the following command:
 
 ```shell
-NuGet Sources Update  -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password" -StorePasswordInClearText
+NuGet Sources Update -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password" -StorePasswordInClearText
 ```
 
 The commands are slightly different when using the Package Manager console in Visual Studio.
