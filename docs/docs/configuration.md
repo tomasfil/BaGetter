@@ -175,6 +175,12 @@ If you have already stored a token instead of storing the credentials as clear t
 NuGet Sources Update  -Name "localhost" -Source "http://localhost:5000/v3/index.json" -UserName "username" -Password "password" -StorePasswordInClearText
 ```
 
+The commands are slightly different when using the Package Manager console in Visual Studio.
+
+```shell
+dotnet nuget add source "http://localhost:5000/v3/index.json" --name "bagetter" --username "username" --password "password"
+```
+
 ## Database configuration
 
 BaGetter supports multiple database engines for storing package information:
