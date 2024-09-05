@@ -6,6 +6,7 @@ using BaGetter.Web;
 using BaGetter.Web.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
@@ -52,6 +53,10 @@ public class Startup
 
     private void ConfigureBaGetterApplication(BaGetterApplication app)
     {
+        //Add base authentication and authorization
+        app.AddNugetBasicHttpAuthentication();
+        app.AddNugetBasicHttpAuthorization();
+
         // Add database providers.
         app.AddAzureTableDatabase();
         app.AddMySqlDatabase();
@@ -85,8 +90,8 @@ public class Startup
         app.UsePathBase(options.PathBase);
 
         app.UseStaticFiles();
-        app.UseAuthentication(); 
-        app.UseRouting(); 
+        app.UseAuthentication();
+        app.UseRouting();
         app.UseAuthorization();
 
         app.UseCors(ConfigureBaGetterServer.CorsPolicy);
