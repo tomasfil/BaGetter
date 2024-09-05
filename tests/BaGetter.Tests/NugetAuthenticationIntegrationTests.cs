@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using BaGetter.Authentication;
 using BaGetter.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
@@ -47,9 +48,7 @@ public class NugetAuthenticationIntegrationTests : IDisposable
     public async Task ValidCredentialsAccess_WhenAnonymousNotAllowed_ReturnsOk()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Add(
-            "Authorization",
-            (IEnumerable<string?>)new StringValues($"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}"))}"));
+        _client.DefaultRequestHeaders.Authorization = new(AuthenticationConstants.NugetBasicAuthenticationScheme, $"{Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}"))}");
 
         // Act
         using var response = await _client.GetAsync("v3/index.json");
@@ -62,9 +61,7 @@ public class NugetAuthenticationIntegrationTests : IDisposable
     public async Task InvalidCredentialsAccess_WhenAnonymousNotAllowed_ReturnsUnauthorized()
     {
         // Arrange
-        _client.DefaultRequestHeaders.Add(
-            "Authorization",
-            (IEnumerable<string?>)new StringValues($"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}x"))}"));
+        _client.DefaultRequestHeaders.Authorization = new(AuthenticationConstants.NugetBasicAuthenticationScheme, $"{Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}x"))}");
 
         // Act
         using var response = await _client.GetAsync("v3/index.json");
