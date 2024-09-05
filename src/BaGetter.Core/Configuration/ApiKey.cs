@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BaGetter.Core.Configuration;
-public sealed class ApiKey
+public class ApiKey
 {
     public string Key { get; set; }
 }
