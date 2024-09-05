@@ -5,6 +5,7 @@ using BaGetter.Core;
 using BaGetter.Web;
 using BaGetter.Web.Authentication;
 using BaGetter.Web.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BaGetter;
