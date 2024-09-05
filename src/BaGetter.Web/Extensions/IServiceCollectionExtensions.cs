@@ -54,13 +54,14 @@ public static class IServiceCollectionExtensions
         return app;
     }
 
-    private static BaGetterApplication AddNugetBasicHttpAuthorization(this BaGetterApplication app)
+    private static BaGetterApplication AddNugetBasicHttpAuthorization(this BaGetterApplication app, Action<AuthorizationPolicyBuilder>? configurePolicy = null)
     {
         app.Services.AddAuthorization(options =>
         {
             options.AddPolicy(AuthenticationConstants.NugetUserPolicy, policy =>
             {
                 policy.RequireAuthenticatedUser();
+                configurePolicy?.Invoke(policy);
             });
         });
 
