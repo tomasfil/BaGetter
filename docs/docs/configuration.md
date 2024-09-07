@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Configuration
 
 You can modify BaGetter's configurations by editing the `appsettings.json` file.
@@ -63,18 +66,90 @@ caching to:
 
 The following `Mirror` setting configures BaGetter to index packages from [nuget.org](https://nuget.org):
 
-```json
-{
-    ...
+<Tabs>
+  <TabItem value="None" label="No Authentication" default>
+    ```json
+    {
+        ...
 
-    "Mirror": {
-        "Enabled":  true,
-        "PackageSource": "https://api.nuget.org/v3/index.json"
-    },
+        "Mirror": {
+            "Enabled":  true,
+            "PackageSource": "https://api.nuget.org/v3/index.json"
+        },
 
-    ...
-}
-```
+        ...
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="Basic" label="Basic Authentication">
+    For basic authentication, set `Type` to `Basic` and provide a `Username` and `Password`:
+
+    ```json
+    {
+        ...
+
+        "Mirror": {
+            "Enabled":  true,
+            "PackageSource": "https://api.nuget.org/v3/index.json",
+            "Authentication": {
+                "Type": "Basic",
+                "Username": "username",
+                "Password": "password"
+            }
+        },
+
+        ...
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="Bearer" label="Bearer Token">
+    For bearer authentication, set `Type` to `Bearer` and provide a `Token`:
+
+    ```json
+    {
+        ...
+
+        "Mirror": {
+            "Enabled":  true,
+            "PackageSource": "https://api.nuget.org/v3/index.json",
+            "Authentication": {
+                "Type": "Bearer",
+                "Token": "your-token"
+            }
+        },
+
+        ...
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="Custom" label="Custom Authentication">
+    With the custom authentication type, you can provide any key-value pairs which will be set as headers in the request:
+
+    ```json
+    {
+        ...
+
+        "Mirror": {
+            "Enabled":  true,
+            "PackageSource": "https://api.nuget.org/v3/index.json",
+            "Authentication": {
+                "Type": "Custom",
+                "CustomHeaders": {
+                    "My-Auth": "your-value",
+                    "Other-Header": "value"
+                }
+            }
+        },
+
+        ...
+    }
+    ```
+  </TabItem>
+</Tabs>
+
 
 :::info
 
@@ -95,6 +170,20 @@ downloaded if you know the package's id and version. You can override this behav
     ...
 
     "PackageDeletionBehavior": "HardDelete",
+
+    ...
+}
+```
+
+## Enable package auto-deletion
+
+If your build server generates many nuget packages, your BaGet server can quickly run out of space. To avoid this issue, `MaxVersionsPerPackage` can be configured to auto-delete packages older packages when a new one is uploaded. This will use the `HardDelete` option detailed above and will unlist and delete the files for the older packages. By default this value is not configured and no packages will be deleted automatically.
+
+```json
+{
+    ...
+
+    "MaxVersionsPerPackage ": 5,
 
     ...
 }
@@ -324,8 +413,6 @@ This allows for sensitive values to be provided individually to the application,
 ### Docker Compose example
 
 ```yaml
-version: '2'
-
 services:
   bagetter:
     image: bagetter/bagetter:latest
@@ -333,6 +420,8 @@ services:
       # Single file mounted for API key
       - ./secrets/api-key.txt:/run/secrets/ApiKey:ro
       - ./data:/srv/baget
+    ports:
+      - "5000:8080"
     environment:
       - Database__ConnectionString=Data Source=/srv/baget/bagetter.db
       - Database__Type=Sqlite
@@ -340,6 +429,12 @@ services:
       - Storage__Type=FileSystem
       - Storage__Path=/srv/baget/packages
 ```
+
+The specified file `./secrets/api-key.txt` contains the clear text api key only.
+
+The port mapping will make available the service at `http://localhost:5000`. (To make it available using `https` you should use an additional reverse proxy service, like "apache" or "nginx".)
+
+Instead of targeting the `latest` version you may also refer to tags for major, minor and fixed releases, e.g. `1`, `1.4` or `1.4.8`.
 
 Aditional documentation for secrets:
 

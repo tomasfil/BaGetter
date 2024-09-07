@@ -25,7 +25,7 @@ With .NET:
 
 With IIS ([official microsoft documentation](https://learn.microsoft.com/aspnet/core/host-and-deploy/iis)):
 
-1. Install the [hosting budle](https://dotnet.microsoft.com/permalink/dotnetcore-current-windows-runtime-bundle-installer)
+1. Install the [hosting bundle](https://dotnet.microsoft.com/permalink/dotnetcore-current-windows-runtime-bundle-installer)
 2. Download the [zip release](https://github.com/bagetter/BaGetter/releases) of BaGetter
 3. Unpack the zip file contents to a folder of your choice
 4. Create a new or configure an existing IIS site to point its physical path to the folder where you unpacked the zip file
@@ -36,7 +36,7 @@ For more information, please refer to the [documentation].
 
 * **Cross-platform**: runs on Windows, macOS, and Linux!
 * **ARM** (64bit) **support**. You can host your NuGets on a device like Raspberry Pi!
-* **Cloud native**: supports [Docker][Docker doc link], [AWS][AWS doc link], [Google Cloud][GCP doc link], [Alibaba Cloud][Aliyun doc link]
+* **Cloud native**: supports [Docker][Docker doc link], [AWS][AWS doc link], [Google Cloud][GCP doc link], [Alibaba Cloud][Aliyun doc link]，[Tencent Cloud][Tencent doc link]
 * **Offline support**: [Mirror a NuGet server][Read through caching] to speed up builds and enable offline downloads
 
 ## 🤝 Contributing
@@ -82,3 +82,4 @@ Thanks to everyone who helps to make BaGetter better!
 [AWS doc link]: https://www.bagetter.com/docs/Installation/aws
 [GCP doc link]: https://www.bagetter.com/docs/Installation/gcp
 [Aliyun doc link]: https://www.bagetter.com/docs/Installation/aliyun
+[Tencent doc link]: https://www.bagetter.com/docs/Installation/tencent
